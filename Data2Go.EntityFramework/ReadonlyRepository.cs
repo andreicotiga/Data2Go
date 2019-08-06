@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Data2Go.EntityFramework
 {
-    public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
+    internal class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
     {
         protected readonly DbSet<T> DbSet;
 

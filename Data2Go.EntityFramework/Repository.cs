@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Data2Go.EntityFramework
 {
-    public class Repository<T> : ReadOnlyRepository<T>, IRepository<T> where T : class
+    internal class Repository<T> : ReadOnlyRepository<T>, IRepository<T> where T : class
     {
         public Repository(DbSet<T> dbSet) : base(dbSet)
         {

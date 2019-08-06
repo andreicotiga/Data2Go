@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace Data2Go.EntityFramework
 {
-    public class EntityFrameworkUnitOfWork : IUnitOfWork
+    internal class UnitOfWork : IUnitOfWork
     {
         private readonly DbContext _dbContext;
         private DbContextTransaction _transaction;
 
-        public EntityFrameworkUnitOfWork(DbContext dbContext)
+        public UnitOfWork(DbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }

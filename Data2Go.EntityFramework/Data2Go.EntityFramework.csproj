@@ -52,6 +52,7 @@
     <Compile Include="ReadonlyRepository.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="UnitOfWorkExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data2Go\Data2Go.csproj">

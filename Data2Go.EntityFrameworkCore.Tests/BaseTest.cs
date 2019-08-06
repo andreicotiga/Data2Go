@@ -10,11 +10,11 @@ namespace Data2Go.EntityFrameworkCore.Tests
             var builder = new DbContextOptionsBuilder<ToGoDataContext>();
             builder.UseInMemoryDatabase("ToGo");
 
-            var personDataContext = new ToGoDataContext(builder.Options);
-            personDataContext.Database.EnsureDeleted();
-            personDataContext.Database.EnsureCreated();
+            var toGoDataContext = new ToGoDataContext(builder.Options);
+            toGoDataContext.Database.EnsureDeleted();
+            toGoDataContext.Database.EnsureCreated();
 
-            return personDataContext;
+            return toGoDataContext;
         }
     }
 }
