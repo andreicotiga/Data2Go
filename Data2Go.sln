@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data2Go", "Data2Go\Data2Go.csproj", "{FE64D2E3-D9EB-4F95-AA0A-3C253D193314}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data2Go", "Data2Go\Data2Go.csproj", "{FE64D2E3-D9EB-4F95-AA0A-3C253D193314}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data2Go.EntityFrameworkCore", "Data2Go.EntityFrameworkCore\Data2Go.EntityFrameworkCore.csproj", "{86EC2C9D-30FE-4BD8-9C5E-8B777A89BF27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data2Go.EntityFrameworkCore", "Data2Go.EntityFrameworkCore\Data2Go.EntityFrameworkCore.csproj", "{86EC2C9D-30FE-4BD8-9C5E-8B777A89BF27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data2Go.EntityFramework", "Data2Go.EntityFramework\Data2Go.EntityFramework.csproj", "{62B02D99-A583-47E5-927E-9FC80031255F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data2Go.EntityFrameworkCore.Tests", "Data2Go.EntityFrameworkCore.Tests\Data2Go.EntityFrameworkCore.Tests.csproj", "{122B0B04-EDF3-46C8-B715-85AD1B6BBF3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data2Go.EntityFrameworkCore.Tests", "Data2Go.EntityFrameworkCore.Tests\Data2Go.EntityFrameworkCore.Tests.csproj", "{122B0B04-EDF3-46C8-B715-85AD1B6BBF3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

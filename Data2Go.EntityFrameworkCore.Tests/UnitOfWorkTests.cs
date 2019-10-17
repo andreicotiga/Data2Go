@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Data2Go.EntityFrameworkCore.Tests
 {
-    public class RepositoryTests : BaseTest
+    public class RepositoryTests : InMemoryDbTests
     {
         private readonly IUnitOfWork _unitOfWork;
 

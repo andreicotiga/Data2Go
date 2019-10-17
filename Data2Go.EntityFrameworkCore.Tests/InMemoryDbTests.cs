@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data2Go.EntityFrameworkCore.Tests
 {
-    public class BaseTest
+    public class InMemoryDbTests
     {
         protected ToGoDataContext GetDbContext()
         {
