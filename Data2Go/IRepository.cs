@@ -11,5 +11,7 @@ namespace Data2Go
         void Remove(T entity);
 
         void Remove(params object[] key);
+
+        void RemoveRange(IEnumerable<T> entities);
     }
 }

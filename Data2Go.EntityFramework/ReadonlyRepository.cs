@@ -19,7 +19,7 @@ namespace Data2Go.EntityFramework
             return DbSet.Find(key);
         }
 
-        public ValueTask<T> FindAsync(object[] key, CancellationToken cancellationToken)
+        public ValueTask<T> FindAsync(CancellationToken cancellationToken, params object[] key)
         {
             return new ValueTask<T>(DbSet.FindAsync(cancellationToken, key));
         }

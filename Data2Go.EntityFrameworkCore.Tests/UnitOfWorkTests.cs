@@ -1,16 +1,18 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Data2Go.EntityFrameworkCore.Tests.Models;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Data2Go.EntityFrameworkCore.Tests
 {
-    public class RepositoryTests : InMemoryDbTests
+    public class UnitOfWorkTests : InMemoryDbTests
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public RepositoryTests()
+        public UnitOfWorkTests()
         {
             _unitOfWork = GetDbContext().ToGo();
         }
@@ -106,6 +108,52 @@ namespace Data2Go.EntityFrameworkCore.Tests
         }
 
         [Fact]
+        public async Task Find_WhenSearchingEntity_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Add(new ToGoOrderItem
+                {
+                    Id = 1,
+                    Name = "Beef Burger",
+                    Size = Size.Big
+                });
+
+            var saved = await _unitOfWork.SaveAsync();
+
+            var found = _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Find(1);
+
+            Assert.NotNull(found);
+            Assert.Equal(1, found.Id);
+            Assert.Equal("Beef Burger", found.Name);
+        }
+
+        [Fact]
+        public async Task FindAsync_WhenSearchingEntity_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Add(new ToGoOrderItem
+                {
+                    Id = 1,
+                    Name = "Beef Burger",
+                    Size = Size.Big
+                });
+
+            var saved = await _unitOfWork.SaveAsync();
+
+            var found = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .FindAsync(CancellationToken.None, 1);
+
+            Assert.NotNull(found);
+            Assert.Equal(1, found.Id);
+            Assert.Equal("Beef Burger", found.Name);
+        }
+
+        [Fact]
         public async Task Update_WhenUpdatingEntityProperty_Works()
         {
             _unitOfWork
@@ -147,7 +195,7 @@ namespace Data2Go.EntityFrameworkCore.Tests
         }
 
         [Fact]
-        public async Task Delete_WhenDeletingEntity_Works()
+        public async Task Remove_WhenRemovingSingleEntity_Works()
         {
             _unitOfWork
                 .GetRepository<ToGoOrderItem>()
@@ -183,6 +231,84 @@ namespace Data2Go.EntityFrameworkCore.Tests
                 .Query().Count();
 
             Assert.Equal(1, count);
+        }
+
+        [Fact]
+        public async Task Remove_WhenRemovingMultipleEntities_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .AddRange(new[]
+                {
+                    new ToGoOrderItem
+                    {
+                        Name = "Beef Burger",
+                        Size = Size.Big
+                    },
+                    new ToGoOrderItem
+                    {
+                        Name = "Chicken Burger",
+                        Size = Size.Small
+                    }
+                });
+
+            await _unitOfWork.SaveAsync();
+
+            var all = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Query()
+                .Where(x => x.Name.Contains("Burger"))
+                .ToListAsync();
+
+            Assert.Equal(2, all.Count);
+
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .RemoveRange(all);
+
+            await _unitOfWork.SaveAsync();
+
+            var count = _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Query().Count();
+
+            Assert.Equal(0, count);
+        }
+
+        [Fact]
+        public async Task Remove_WhenRemovingEntityById_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .AddRange(new[]
+                {
+                    new ToGoOrderItem
+                    {
+                        Id = 1,
+                        Name = "Beef Burger",
+                        Size = Size.Big
+                    },
+                    new ToGoOrderItem
+                    {
+                        Id = 2,
+                        Name = "Chicken Burger",
+                        Size = Size.Small
+                    }
+                });
+
+            await _unitOfWork.SaveAsync();
+
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Remove(1);
+
+            await _unitOfWork.SaveAsync();
+
+            var found = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .FindAsync(CancellationToken.None, 1);
+
+            Assert.Null(found);
         }
     }
 }

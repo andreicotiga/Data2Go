@@ -8,7 +8,7 @@ namespace Data2Go
     {
         T Find(params object[] key);
 
-        ValueTask<T> FindAsync(object[] key, CancellationToken cancellationToken);
+        ValueTask<T> FindAsync(CancellationToken cancellationToken, params object[] key);
 
         IQueryable<T> Query();
     }

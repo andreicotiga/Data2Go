@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Data2Go.EntityFramework.Tests.Infrastructure;
 using Data2Go.EntityFramework.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,7 +16,8 @@ namespace Data2Go.EntityFramework.Tests
 
         public UnitOfWorkTests()
         {
-
+            var context = new ToGoDataContext(Effort.DbConnectionFactory.CreateTransient());
+            _unitOfWork = context.ToGo();
         }
 
         [TestMethod]
@@ -28,13 +32,13 @@ namespace Data2Go.EntityFramework.Tests
                 });
 
             var saved = await _unitOfWork.SaveAsync();
-            Assert.Equals(1, saved);
+            Assert.AreEqual(1, saved);
 
             var existing = _unitOfWork
                 .GetRepository<ToGoOrderItem>()
                 .Query()
                 .Count();
-            Assert.Equals(1, existing);
+            Assert.AreEqual(1, existing);
         }
 
         [TestMethod]
@@ -58,13 +62,13 @@ namespace Data2Go.EntityFramework.Tests
 
 
             var saved = await _unitOfWork.SaveAsync();
-            Assert.Equals(2, saved);
+            Assert.AreEqual(2, saved);
 
             var existing = _unitOfWork
                 .GetRepository<ToGoOrderItem>()
                 .Query()
                 .Count();
-            Assert.Equals(2, existing);
+            Assert.AreEqual(2, existing);
         }
 
         [TestMethod]
@@ -102,8 +106,54 @@ namespace Data2Go.EntityFramework.Tests
                 .SingleOrDefault();
 
             Assert.IsNotNull(queryOrder);
-            Assert.Equals(order.Name, queryOrder.Name);
-            Assert.Equals(order.CreatedDate, queryOrder.CreatedDate);
+            Assert.AreEqual(order.Name, queryOrder.Name);
+            Assert.AreEqual(order.CreatedDate, queryOrder.CreatedDate);
+        }
+
+        [TestMethod]
+        public async Task Find_WhenSearchingEntity_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Add(new ToGoOrderItem
+                {
+                    Id = 1,
+                    Name = "Beef Burger",
+                    Size = Size.Big
+                });
+
+            var saved = await _unitOfWork.SaveAsync();
+
+            var found = _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Find(1);
+
+            Assert.IsNotNull(found);
+            Assert.AreEqual(1, found.Id);
+            Assert.AreEqual("Beef Burger", found.Name);
+        }
+
+        [TestMethod]
+        public async Task FindAsync_WhenSearchingEntity_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Add(new ToGoOrderItem
+                {
+                    Id = 1,
+                    Name = "Beef Burger",
+                    Size = Size.Big
+                });
+
+            var saved = await _unitOfWork.SaveAsync();
+
+            var found = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .FindAsync(CancellationToken.None, 1);
+
+            Assert.IsNotNull(found);
+            Assert.AreEqual(1, found.Id);
+            Assert.AreEqual("Beef Burger", found.Name);
         }
 
         [TestMethod]
@@ -144,11 +194,11 @@ namespace Data2Go.EntityFramework.Tests
                 .Query()
                 .Count(i => i.Size == Size.Big);
 
-            Assert.Equals(2, bigCount);
+            Assert.AreEqual(2, bigCount);
         }
 
         [TestMethod]
-        public async Task Delete_WhenDeletingEntity_Works()
+        public async Task Remove_WhenRemovingSingleEntity_Works()
         {
             _unitOfWork
                 .GetRepository<ToGoOrderItem>()
@@ -183,7 +233,85 @@ namespace Data2Go.EntityFramework.Tests
                 .GetRepository<ToGoOrderItem>()
                 .Query().Count();
 
-            Assert.Equals(1, count);
+            Assert.AreEqual(1, count);
+        }
+
+        [TestMethod]
+        public async Task Remove_WhenRemovingMultipleEntities_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .AddRange(new[]
+                {
+                    new ToGoOrderItem
+                    {
+                        Name = "Beef Burger",
+                        Size = Size.Big
+                    },
+                    new ToGoOrderItem
+                    {
+                        Name = "Chicken Burger",
+                        Size = Size.Small
+                    }
+                });
+
+            await _unitOfWork.SaveAsync();
+
+            var all = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Query()
+                .Where(x => x.Name.Contains("Burger"))
+                .ToListAsync();
+
+            Assert.AreEqual(2, all.Count);
+
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .RemoveRange(all);
+
+            await _unitOfWork.SaveAsync();
+
+            var count = _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Query().Count();
+
+            Assert.AreEqual(0, count);
+        }
+
+        [TestMethod]
+        public async Task Remove_WhenRemovingEntityById_Works()
+        {
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .AddRange(new[]
+                {
+                    new ToGoOrderItem
+                    {
+                        Id = 1, 
+                        Name = "Beef Burger",
+                        Size = Size.Big
+                    },
+                    new ToGoOrderItem
+                    {
+                        Id = 2,
+                        Name = "Chicken Burger",
+                        Size = Size.Small
+                    }
+                });
+
+            await _unitOfWork.SaveAsync();
+
+            _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .Remove(1);
+
+            await _unitOfWork.SaveAsync();
+
+            var found = await _unitOfWork
+                .GetRepository<ToGoOrderItem>()
+                .FindAsync(CancellationToken.None, 1);
+
+            Assert.IsNull(found);
         }
     }
 }
