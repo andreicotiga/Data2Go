@@ -24,7 +24,7 @@ The sample code below uses EF as the underlying data provider. Calling the `ToGo
 
 var myDbContext = ... //create and setup the DbContext
 
-//to create a the unit of work instance, just call ToGo on your EF DbContext
+//to create a unit of work instance, just call ToGo on your EF DbContext
 var toGo = myDbContext.ToGo();
 
 //creating a repository and adding data
