@@ -1,21 +1,22 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Data2Go.EntityFrameworkCore.Tests.Models;
-using Xunit;
+using Data2Go.EntityFramework.Tests.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Data2Go.EntityFrameworkCore.Tests
+namespace Data2Go.EntityFramework.Tests
 {
-    public class RepositoryTests : InMemoryDbTests
+    [TestClass]
+    public class UnitOfWorkTests
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public RepositoryTests()
+        public UnitOfWorkTests()
         {
-            _unitOfWork = GetDbContext().ToGo();
+
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Add_WhenAddingSingleEntity_Works()
         {
             _unitOfWork
@@ -27,16 +28,16 @@ namespace Data2Go.EntityFrameworkCore.Tests
                 });
 
             var saved = await _unitOfWork.SaveAsync();
-            Assert.Equal(1, saved);
+            Assert.Equals(1, saved);
 
             var existing = _unitOfWork
                 .GetRepository<ToGoOrderItem>()
                 .Query()
                 .Count();
-            Assert.Equal(1, existing);
+            Assert.Equals(1, existing);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Add_WhenAddingMultipleEntities_Works()
         {
             _unitOfWork
@@ -57,16 +58,16 @@ namespace Data2Go.EntityFrameworkCore.Tests
 
 
             var saved = await _unitOfWork.SaveAsync();
-            Assert.Equal(2, saved);
+            Assert.Equals(2, saved);
 
             var existing = _unitOfWork
                 .GetRepository<ToGoOrderItem>()
                 .Query()
                 .Count();
-            Assert.Equal(2, existing);
+            Assert.Equals(2, existing);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Add_WhenAddingNavigationEntities_Works()
         {
             var order = new ToGoOrder
@@ -100,12 +101,12 @@ namespace Data2Go.EntityFrameworkCore.Tests
                 .Query()
                 .SingleOrDefault();
 
-            Assert.NotNull(queryOrder);
-            Assert.Equal(order.Name, queryOrder.Name);
-            Assert.Equal(order.CreatedDate, queryOrder.CreatedDate);
+            Assert.IsNotNull(queryOrder);
+            Assert.Equals(order.Name, queryOrder.Name);
+            Assert.Equals(order.CreatedDate, queryOrder.CreatedDate);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Update_WhenUpdatingEntityProperty_Works()
         {
             _unitOfWork
@@ -143,10 +144,10 @@ namespace Data2Go.EntityFrameworkCore.Tests
                 .Query()
                 .Count(i => i.Size == Size.Big);
 
-            Assert.Equal(2, bigCount);
+            Assert.Equals(2, bigCount);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task Delete_WhenDeletingEntity_Works()
         {
             _unitOfWork
@@ -182,7 +183,7 @@ namespace Data2Go.EntityFrameworkCore.Tests
                 .GetRepository<ToGoOrderItem>()
                 .Query().Count();
 
-            Assert.Equal(1, count);
+            Assert.Equals(1, count);
         }
     }
 }

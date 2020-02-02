@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,9 +19,9 @@ namespace Data2Go.EntityFrameworkCore
             return DbSet.Find(key);
         }
 
-        public Task<T> FindAsync(params object[] key)
+        public ValueTask<T> FindAsync(object[] key, CancellationToken cancellationToken)
         {
-            return DbSet.FindAsync(key);
+            return DbSet.FindAsync(key, cancellationToken);
         }
 
         public virtual IQueryable<T> Query()

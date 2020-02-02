@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Data2Go
@@ -7,7 +8,7 @@ namespace Data2Go
     {
         T Find(params object[] key);
 
-        Task<T> FindAsync(params object[] key);
+        ValueTask<T> FindAsync(object[] key, CancellationToken cancellationToken);
 
         IQueryable<T> Query();
     }
