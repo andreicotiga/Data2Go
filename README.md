@@ -24,10 +24,10 @@ The sample code below uses EF as the underlying data provider. Calling the `ToGo
 
 var myDbContext = ... //create and setup the DbContext
 
-//to the unit of work, just call ToGo on your DbContext
+//to create a the unit of work instance, just call ToGo on your EF DbContext
 var toGo = myDbContext.ToGo();
 
-//adding data
+//creating a repository and adding data
 toGo
     .GetRepository<ToGoOrderItem>()
     .Add(new ToGoOrderItem
@@ -38,7 +38,7 @@ toGo
      
 await toGo.SaveAsync();
      
-//reading data     
+//creating a repository and reading data     
 var big = toGo
     .GetRepository<ToGoOrderItem>()
     .Query()
@@ -49,7 +49,7 @@ big.Name = "Big Beef Burger";
 
 await toGo.SaveAsync();
 
-//removing data
+//creating a repository and removing data
 toGo
     .GetRepository<ToGoOrderItem>()
     .Remove(big);
@@ -62,4 +62,5 @@ Check the tests package of each provider implementation to get more info on what
 
 ### Supported providers
 
-It comes with out-of-the-box support for EntityFramework and EntityFrameworkCore. However given that Data2Go was designed to be provider agnostic others can be easily added. Just take a look at the EF providers as an example of how easy it is to add a new one. Pull requests are welcomed ;)
+Support for EntityFramework and EntityFrameworkCore is out-of-the-box. However, given that Data2Go was designed to be provider agnostic, other providers can be easily added. 
+Take a look at the 2 EF providers as an example of how easy it is to add a new one. Pull requests are welcomed ;)
